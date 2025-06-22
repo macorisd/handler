@@ -4,8 +4,6 @@ import logging
 from uuid import UUID
 from src.actions.base_action import BaseAction
 
-import time
-
 logger = logging.getLogger(__name__)
 
 # Estructura GUID para ctypes
@@ -148,6 +146,8 @@ class BrightnessAction(BaseAction):
 
 
 if __name__ == "__main__":
+    import time
+    
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

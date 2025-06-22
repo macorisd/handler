@@ -5,10 +5,10 @@ from src.actions.base_action import BaseAction
 logger = logging.getLogger(__name__)
 
 # Windows virtual-key codes and flags
-VK_VOLUME_UP    = 0xAF
-VK_VOLUME_DOWN  = 0xAE
+VK_VOLUME_UP = 0xAF
+VK_VOLUME_DOWN = 0xAE
 KEYEVENTF_EXTENDEDKEY = 0x0001
-KEYEVENTF_KEYUP       = 0x0002
+KEYEVENTF_KEYUP = 0x0002
 
 class VolumeAction(BaseAction):
     """
@@ -52,6 +52,7 @@ class VolumeAction(BaseAction):
 
 if __name__ == "__main__":
     import time
+    
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
