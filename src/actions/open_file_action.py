@@ -40,7 +40,6 @@ if __name__ == "__main__":
 
     print("=== OpenFileAction Test ===\n")
 
-    # Adjust the path to a real file on your system before testing
     test_path = r"C:\\Windows\\System32\\notepad.exe"
     print(f"1. Testing open file: {test_path}")
     action = OpenFileAction("Open Notepad", test_path)
