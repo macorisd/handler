@@ -86,14 +86,9 @@ class BrightnessAction(BaseAction):
     def __init__(self, name: str, value: str, step: int = 20):
         """
         Initialize the BrightnessAction.
-        
-        Args:
-            name: Name of the gesture/action
-            value: Direction ("up" or "down")
-            step: Brightness adjustment step in percentage (default: 20)
         """
         super().__init__(name, value)
-        self.step = max(1, min(100, step))  # Ensure step is between 1-100    def execute(self) -> None:
+        self.step = max(1, min(100, step))  # Ensure step is between 1-100
 
     def execute(self) -> None:
         """

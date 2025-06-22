@@ -5,17 +5,20 @@ from src.actions.base_action import BaseAction
 logger = logging.getLogger(__name__)
 
 # Windows virtual-key codes and flags
-VK_VOLUME_UP = 0xAF
-VK_VOLUME_DOWN = 0xAE
+VK_VOLUME_UP    = 0xAF
+VK_VOLUME_DOWN  = 0xAE
 KEYEVENTF_EXTENDEDKEY = 0x0001
 KEYEVENTF_KEYUP       = 0x0002
-VOLUME_STEP_PRESSES   = 5  # Approx. 5 * 2% = 10%
 
 class VolumeAction(BaseAction):
     """
     Action to adjust system volume by simulating multimedia key presses,
     so that Windows shows its native on-screen volume display (OSD).
     """
+
+    def __init__(self, name: str, value: str, step: int = 5):
+        super().__init__(name, value)
+        self.step = max(1, min(50, step))  # Ensure step is between 1-50
 
     @staticmethod
     def _send_key(vk_code: int) -> None:
@@ -30,50 +33,46 @@ class VolumeAction(BaseAction):
         Execute the volume adjustment by sending multimedia key events.
         """
         direction = self.value.lower()
-        if direction not in ["up", "down"]:
-            logger.error(f"[VolumeAction] Invalid value '{self.value}'. Must be 'up' or 'down'")
+        if direction not in ("up", "down"):
+            logger.error(f"[VolumeAction] Invalid value '{self.value}'. Must be 'up' or 'down'.")
             return
 
         vk = VK_VOLUME_UP if direction == "up" else VK_VOLUME_DOWN
-        logger.info(f"[VolumeAction] Simulating {direction} volume key presses for gesture '{self.name}'")
+        logger.info(f"[VolumeAction] Simulating {direction} volume key presses "
+                    f"({self.step} times) for gesture '{self.name}'")
 
         try:
-            for _ in range(VOLUME_STEP_PRESSES):
+            for _ in range(self.step):
                 self._send_key(vk)
-            logger.info(f"[VolumeAction] Volume {direction} simulated ({VOLUME_STEP_PRESSES} presses) for gesture '{self.name}'")
+            logger.info(f"[VolumeAction] Volume {direction} simulated "
+                        f"({self.step} presses) for gesture '{self.name}'")
         except Exception as e:
             logger.error(f"[VolumeAction] Unexpected error simulating volume key: {e}", exc_info=True)
 
 
-
 if __name__ == "__main__":
+    import time
     logging.basicConfig(
         level=logging.DEBUG,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
-    
+
     print("=== VolumeAction Test ===\n")
 
-    # Test volume up
-    print("1. Testing volume UP")
+    # Test volume up with default step (5 presses)
+    print("1. Testing volume UP, default step")
     action_up = VolumeAction("Volume Up Gesture", "up")
     action_up.execute()
-    print()
-    
-    # Wait 2 seconds
-    import time
     time.sleep(2)
-    
-    # Test volume down
-    print("2. Testing volume DOWN")
-    action_down = VolumeAction("Volume Down Gesture", "down")
+
+    # Test volume down with custom step (1 press)
+    print("\n2. Testing volume DOWN, custom step of 1")
+    action_down = VolumeAction("Volume Down Gesture", "down", step=1)
     action_down.execute()
-    print()
-    
+    time.sleep(2)
+
     # Test invalid value
-    print("3. Testing invalid value")
-    action_invalid = VolumeAction("Invalid Gesture", "invalid")
+    print("\n3. Testing invalid value")
+    action_invalid = VolumeAction("Invalid Gesture", "invalid", step=4)
     action_invalid.execute()
-    print()
-    
-    print("=== Volume tests completed ===")
+    print("\n=== Tests completed ===")
