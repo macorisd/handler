@@ -1,39 +1,54 @@
 import subprocess
 import logging
-from .base_action import BaseAction
+from src.actions.base_action import BaseAction
 
 logger = logging.getLogger(__name__)
 
 
 class CommandAction(BaseAction):
     """
-    Action to execute a shell/console command.
+    Action to execute a console command in a new terminal window.
 
     The `value` parameter should be the full command line string to run.
     """
 
     def execute(self) -> None:
         """
-        Execute the configured console command.
+        Execute the configured console command in a new terminal window.
         """
-        logger.info(f"[CommandAction] Ejecutando comando para gesto '{self.name}': {self.value}")
+        logger.info(f"[CommandAction] Opening new terminal for gesture '{self.name}': {self.value}")
         try:
-            # Ejecuta el comando en el shell
-            result = subprocess.run(
-                self.value,
+            cmd_command = f'start "Gesture: {self.name}" cmd /k "{self.value}"'
+            
+            subprocess.run(
+                cmd_command,
                 shell=True,
-                check=True,
-                capture_output=True,
-                text=True
+                check=True
             )
-            # Loguear salida estándar y de error si existiera
-            if result.stdout:
-                logger.debug(f"[CommandAction] STDOUT: {result.stdout.strip()}")
-            if result.stderr:
-                logger.warning(f"[CommandAction] STDERR: {result.stderr.strip()}")
+            logger.info(f"[CommandAction] New terminal opened successfully for: {self.name}")
+            
         except subprocess.CalledProcessError as e:
             logger.error(
-                f"[CommandAction] Error al ejecutar comando '{self.value}' "
-                f"(returncode={e.returncode}): {e.stderr or e.stdout}",
+                f"[CommandAction] Error opening new terminal for command '{self.value}' "
+                f"(returncode={e.returncode})",
                 exc_info=True
             )
+        except Exception as e:
+            logger.error(
+                f"[CommandAction] Unexpected error executing command '{self.value}': {str(e)}",
+                exc_info=True
+            )
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
+    print("=== CommandAction Test ===\n")
+
+    print("Executing command: start notepad")
+    action = CommandAction("Open Notepad", "start notepad")
+    action.execute()
+    print()
