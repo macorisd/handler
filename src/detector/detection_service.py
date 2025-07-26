@@ -19,6 +19,7 @@ class DetectionService:
         """
         Initialize video capture and hand detector.
         """
+        self._running = False
         self.detector = HandDetector()
         self.enable_drawing = enable_drawing
         self.cap = cv2.VideoCapture(camera_index)
@@ -28,12 +29,13 @@ class DetectionService:
         Start detection loop.
         Press 'q' to quit.
         """
+        self._running = True
         if not self.cap.isOpened():
             logger.error("Could not open camera.")
             return
 
         try:
-            while True:
+            while self._running:
                 start_time = time.time()
 
                 ret, frame = self.cap.read()
@@ -88,6 +90,9 @@ class DetectionService:
         finally:
             self.cap.release()
             cv2.destroyAllWindows()
+    
+    def stop(self):
+        self._running = False
 
 
 if __name__ == '__main__':
