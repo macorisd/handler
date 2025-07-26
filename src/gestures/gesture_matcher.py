@@ -35,8 +35,8 @@ class GestureMatcher:
         current_descriptor_np = np.array(current_descriptor)
 
         for gesture in gesture_manager.gestures:
-            gesture_name = gesture.get("name", "Gesture")
-            sample_descriptors = gesture.get("gesture_descriptor", [])
+            gesture_name = gesture.name
+            sample_descriptors = gesture.descriptors
 
             if not sample_descriptors or len(sample_descriptors[0]) != len(current_descriptor):
                 # logger.debug(f"Sample descriptor: {sample_descriptors[0]}")
@@ -64,7 +64,7 @@ class GestureMatcher:
                     best_match = gesture
 
         if best_match:
-            logger.info(f"Best match found: '{best_match.get('name')}' with {max_confidence:.2f}% confidence.")
+            logger.info(f"Best match found: '{best_match.name}' with {max_confidence:.2f}% confidence.")
         else:
             logger.info(f"No gesture passed the {GestureMatcher.CONFIDENCE_THRESHOLD}% confidence threshold. Max confidence was {max_confidence:.2f}%.")
 

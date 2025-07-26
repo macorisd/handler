@@ -1,6 +1,9 @@
 import json
 import os
 import logging
+from typing import List, Dict
+
+from src.gestures.gesture import Gesture
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +40,7 @@ class GestureManager:
         """
         try:
             with open(self.gestures_path, 'r', encoding='utf-8') as f:
-                self.gestures = json.load(f)
+                self.gestures = self.gesture_list_from_json(json.load(f))
             logger.info(f"Successfully loaded {len(self.gestures)} gestures from '{self.gestures_path}'")
         except FileNotFoundError:
             logger.error(f"Gesture configuration file not found at '{self.gestures_path}'. No gestures were loaded.")
@@ -48,3 +51,7 @@ class GestureManager:
         except Exception as e:
             logger.error(f"An unexpected error occurred while loading gestures: {e}", exc_info=True)
             self.gestures = []
+    
+    @staticmethod
+    def gesture_list_from_json(gestures_json: List[Dict]) -> List[Gesture]:
+        return [Gesture(**gesture, save=False) for gesture in gestures_json]

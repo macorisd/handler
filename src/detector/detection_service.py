@@ -54,13 +54,13 @@ class DetectionService:
                     matched_gesture = GestureMatcher.match_gesture(current_descriptor=descriptor)
 
                     if matched_gesture:
-                        gesture_name = matched_gesture.get('name')
+                        gesture_name = matched_gesture.name
                         logger.info(f"Gesture matched: {gesture_name}")
 
                         action = ActionFactory.create_action(
-                            action_name=matched_gesture.get('name'),
-                            action_type=matched_gesture.get('type'),
-                            action_value=matched_gesture.get('value')
+                            action_name=matched_gesture.name,
+                            action_type=matched_gesture.type,
+                            action_value=matched_gesture.value
                         )
 
                         action.execute()

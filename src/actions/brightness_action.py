@@ -97,7 +97,7 @@ class BrightnessAction(BaseAction):
             logger.error(f"[BrightnessAction] Invalid value '{self.value}'. Must be 'up' or 'down'")
             return
 
-        # 1. Get current brightness via WMI
+        # Get current brightness via WMI
         try:
             out = subprocess.check_output(
                 ["powershell", "-Command",
@@ -116,7 +116,7 @@ class BrightnessAction(BaseAction):
             f"(step: {self.step}%) for gesture '{self.name}'"
         )
 
-        # 2. Get active scheme GUID
+        # Get active scheme GUID
         scheme_ptr = ctypes.POINTER(GUID)()
         res = PowerGetActiveScheme(None, ctypes.byref(scheme_ptr))
         if res != 0:
@@ -124,7 +124,7 @@ class BrightnessAction(BaseAction):
             return
         scheme = scheme_ptr.contents
 
-        # 3. Write new value for AC and DC
+        # Write new value for AC and DC
         r_ac = PowerWriteACValueIndex(None, ctypes.byref(scheme),
                                       ctypes.byref(VIDEO_SUBGROUP),
                                       ctypes.byref(BRIGHTNESS_GUID),
@@ -137,7 +137,7 @@ class BrightnessAction(BaseAction):
             logger.error(f"[BrightnessAction] PowerWriteValueIndex failed (AC={r_ac}, DC={r_dc})")
             return
 
-        # 4. Apply changes and trigger OSD
+        # Apply changes and trigger OSD
         PowerSetActiveScheme(None, ctypes.byref(scheme))
         PowerApplySettingChanges(None, ctypes.byref(scheme))
 
